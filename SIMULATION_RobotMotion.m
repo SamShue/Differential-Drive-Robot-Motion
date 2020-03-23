@@ -6,9 +6,13 @@ robotPose = [0,0,0];
 Vr_mps = 0.2;
 Vl_mps = 0.2;
 dt_s = 0.01; % time between iterations in seconds
+trackWidth_m = 0.5;
 
 for ii = 1: 200
-    robotPose = differentialDriveKinematics(Vr_mps, Vl_mps, dt_s, 0.5);
+    v_mps = (Vr_mps + Vl_mps)/2.0;
+    w_radps = (Vr_mps - Vl_mps) / trackWidth_m;
+
+    robotPose = differentialDriveKinematics(v_mps, w_radps, dt_s, 'icr');
     
     % Render environment
     %======================================================================
