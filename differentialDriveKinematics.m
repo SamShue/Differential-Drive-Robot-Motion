@@ -15,7 +15,6 @@ if(strcmp(model, 'icr'))
     % compute radius of curvature
     r = abs(v_mps/w_radps);
     
-    
     theta = pose(3);
     % compute sin and cos at initial pose
     s = sin(theta);
@@ -38,7 +37,19 @@ if(strcmp(model, 'icr'))
         pose(3) = pose(3) + w_radps*dt_s;
     end
 else
+    % The linear model. This model does not account for curvature in motion
+    % and applies motion as a linear move then rotation. While not as 
+    % accurate as the ICR model, this model's error is very small when 
+    % applied at extremely high sampling rates.
     
+    theta = pose(3);
+    % create rotation matrix to get velocities in global frame
+    R = [cos(theta) 0;
+         sin(theta) 0;
+         0          1];
+    u = [v_mps; w_radps];
+    % update pose with global frame velocities
+    pose = pose + R*u.*dt_s;
 end
 
 robotPose = pose;
