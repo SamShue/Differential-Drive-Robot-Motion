@@ -28,7 +28,7 @@ Once we have the linear velocity of the left and right wheel, we then need to co
 
 To compute linear and rotational velocities, the following equations are used:
 
-<img src="https://render.githubusercontent.com/render/math?math=v_{m/s} =  \frac{v_r_{m/s} + v_l_{m/s}}{2}">
+<img src="https://render.githubusercontent.com/render/math?math=v_{m/s} =  \frac{v_r_{m/s} %2B v_l_{m/s}}{2}">
 
 and 
 
@@ -75,14 +75,16 @@ Where v and omega are the robot's linear and rotational velocities. This gives u
 
 Where xc and yc is the center point of the circle described by the robot's motion. The following equation computes the arclength of the robot's motion along the circle to find the new pose of the robot after delta t seconds of travel:
 
-<img src="https://render.githubusercontent.com/render/math?math=\begin{pmatrix} x_c - \frac{v}{\omega}sin(\theta + \omega\Delta t) \\  y_c + \frac{v}{\omega}cos(\theta + \omega\Delta t) \\  \theta + \omega\Delta t \end{pmatrix}">
+<img src="https://render.githubusercontent.com/render/math?math=\begin{pmatrix} x_c - \frac{v}{\omega}sin(\theta %2B \omega\Delta t) \\  y_c %2B \frac{v}{\omega}cos(\theta %2B \omega\Delta t) \\  \theta %2B \omega\Delta t \end{pmatrix}">
 
 Which after substituting for xc and yc:
 
-<img src="https://render.githubusercontent.com/render/math?math=\begin{pmatrix} x - \frac{v}{\omega}sin(\theta) - \frac{v}{\omega}sin(\theta + \omega\Delta t) \\  y + \frac{v}{\omega}cos(\theta) - \frac{v}{\omega}cos(\theta + \omega\Delta t) \\  \theta + \omega\Delta t \end{pmatrix}">
+<img src="https://render.githubusercontent.com/render/math?math=\begin{pmatrix} x - \frac{v}{\omega}sin(\theta) - \frac{v}{\omega}sin(\theta %2B \omega\Delta t) \\  y %2B \frac{v}{\omega}cos(\theta) - \frac{v}{\omega}cos(\theta %2B \omega\Delta t) \\  \theta %2B \omega\Delta t \end{pmatrix}">
 
 This equation gives us the robot's new pose while considering the curvature of the motion. However, this model has one caveat: pure linear motion. If the robot is driving on a straight line, the circle describing it's motion has an infinite radius. So we need to add a conditional statement to handle this. If the robot's angular velocity is sufficently small, then we will assume it is following a straight line and we will use the following model:
 
-<img src="https://render.githubusercontent.com/render/math?math=\begin{pmatrix} x+v \Delta t cos(\theta + \omega\Delta t) \\  y + v \Delta t sin(\theta + \omega\Delta t) \\  \theta + \omega\Delta t \end{pmatrix}">
+<img src="https://render.githubusercontent.com/render/math?math=\begin{pmatrix} x %2B v \Delta t cos(\theta %2B \omega\Delta t) \\  y %2B v \Delta t sin(\theta %2B \omega\Delta t) \\  \theta %2B \omega\Delta t \end{pmatrix}">
 
 Where we simply compute the linear motion of the robot and divide it into x and y components based on the robot's final orientation.
+
+[//]: #(Note: + signs do not show up, so %2B must be used to replace them. https://gist.github.com/a-rodin/fef3f543412d6e1ec5b6cf55bf197d7b)
