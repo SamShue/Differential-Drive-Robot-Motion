@@ -87,4 +87,8 @@ This equation gives us the robot's new pose while considering the curvature of t
 
 Where we simply compute the linear motion of the robot and divide it into x and y components based on the robot's final orientation.
 
+## MATLAB Code Demo
+
+The project code demonstrates the two models mentioned above with a very simple robot simulation. To run the code, simply clone this repository and run the script SIMULATION_RobotMotion.m. This code will drive a simulated robot along a sinusoidal path using the ICR model by default.
+
 <!--- Note: + signs do not show up, so %2B must be used to replace them. https://gist.github.com/a-rodin/fef3f543412d6e1ec5b6cf55bf197d7b -->

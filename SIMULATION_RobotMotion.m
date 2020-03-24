@@ -6,6 +6,7 @@ close all;
 robotPose = [0,0,0];
 tireDiameter_m = 0.25;
 trackWidth_m = 0.5;
+model = 'icr'; % or 'linear'
 
 % Populate wheel velocities vector
 v_radps = 20;
@@ -20,11 +21,11 @@ for ii = 1:length(u(1,:))
     % Convert rad/s to m/s based on tire diameter
     Vr_mps = Vr_radps * tireDiameter_m / (2 * pi);
     Vl_mps = Vl_radps * tireDiameter_m / (2 * pi);
-    
+    % Get robot frame linear and rotational velocities
     v_mps = (Vr_mps + Vl_mps) / 2.0;
     w_radps = (Vr_mps - Vl_mps) / trackWidth_m;
-    
-    robotPose = differentialDriveKinematics(robotPose, v_mps, w_radps, dt_s, 'icr');
+    % Update robot pose using kinematic model
+    robotPose = differentialDriveKinematics(robotPose, v_mps, w_radps, dt_s, model);
     
     % Render environment
     %======================================================================
