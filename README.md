@@ -18,7 +18,7 @@ We will define the 2D pose of the robot as the following:
 
 The pose of the robot corresponds to its x,y position and theta orientation within the global frame. The robot is modeled as a single point with some orientation.
 
-<img src="resources/globalFrame.png">
+<img src="resources/globalFrame.png" width="200" height="200">
 
 The control input for the robot will be derived from its wheel enocders. The wheel encoders measure the rotations of the robot's wheels, which can be used to determine the velocity of each wheel. Typically, this value is produced in radians per second. We will want to transform this value so we get meters per secod for each wheel:
 
