@@ -30,7 +30,7 @@ for ii = 1:length(u(1,:))
     %======================================================================
     clf;
     hold on;
-    xlim([-5 5]); ylim([-5 5]);
+    xlim([-1 4]); ylim([-2 2]);
     xlabel('meters'); ylabel('meters');
     if(exist('robotPose'))
         drawRobot(robotPose(1), robotPose(2), rad2deg(robotPose(3)), 0.25);
