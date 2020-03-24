@@ -40,7 +40,7 @@ where <img src="https://render.githubusercontent.com/render/math?math=v_r_{m/s}"
 
 To determine our robot's position after getting the linear and rotational velocities of the robot, we need a mathematical model representing the kinematics of the differential drive system. This model will allow us to input the velocities and the amount of time between readings to determine the robot's change in position. The simplest model for the kinematics of a differential drive robot is a linear model that simply performs the linear translation and rotation afterwards. This model begins by creating a rotation matrix based on the robot's current orientation.
 
-<img src="https://render.githubusercontent.com/render/math?math=R(\theta) = \begin{bmatrix} cos(\theta) & 0\\ sin(\theta) & 0\\ 0 & 1\end{bmatrix}">
+<img src="https://render.githubusercontent.com/render/math?math=R(\theta) = \begin{bmatrix} cos(\theta) & 0 \\ sin(\theta) & 0 \\ 0 & 1 \end{bmatrix}">
 
 Where theta is the robot's current orientation. We will multiply this matrix by a vector containing our linear and rotational velocities.
 
@@ -57,3 +57,32 @@ by multiplying these by the change in time between iterations, <img src="https:/
 
 While the linear model is simple, and when used at a very high sampling rate, it provides a "good enough" estimation of the robot's position. However, this model does not account for the curvature of the robot's motion as it only performs a linear motion THEN rotates. In reality, the robot is turning while making its linear motion. The model introduced here will account for this and provide a more accurate estimation of the robot's pose (assuming constant velocity).
 
+If the robot is driving at a constant linear and rotational velocity, that motion can be described as a circle with some radius. The equation for an arbitrary objection moving on a circular trajector with radius r can be described by:
+
+<img src="https://render.githubusercontent.com/render/math?math=v = \omega r">
+
+Rearranged, we get::
+
+<img src="https://render.githubusercontent.com/render/math?math=r = abs(\frac{v}{r})">
+
+
+Where v and omega are the robot's linear and rotational velocities. This gives us the radius of the circle described by the robot's motion. The point in the center of this circle is called the instantaneous center of rotation. "Instantaneous" as we are only considering the velocity of the robot at that current moment. The equations to find the x,y point that is the center of rotation are as follows:
+
+<img src="https://render.githubusercontent.com/render/math?math=x_c = x - \frac{v}{\omega}sin(\theta)">
+
+<img src="https://render.githubusercontent.com/render/math?math=y_c = y - \frac{v}{\omega}cos(\theta)">
+
+
+Where xc and yc is the center point of the circle described by the robot's motion. The following equation computes the arclength of the robot's motion along the circle to find the new pose of the robot after delta t seconds of travel:
+
+<img src="https://render.githubusercontent.com/render/math?math=\begin{pmatrix} x_c - \frac{v}{\omega}sin(\theta + \omega\Delta t) \\  y_c + \frac{v}{\omega}cos(\theta + \omega\Delta t) \\  \theta + \omega\Delta t \end{pmatrix}">
+
+Which after substituting for xc and yc:
+
+<img src="https://render.githubusercontent.com/render/math?math=\begin{pmatrix} x - \frac{v}{\omega}sin(\theta) - \frac{v}{\omega}sin(\theta + \omega\Delta t) \\  y + \frac{v}{\omega}cos(\theta) - \frac{v}{\omega}cos(\theta + \omega\Delta t) \\  \theta + \omega\Delta t \end{pmatrix}">
+
+This equation gives us the robot's new pose while considering the curvature of the motion. However, this model has one caveat: pure linear motion. If the robot is driving on a straight line, the circle describing it's motion has an infinite radius. So we need to add a conditional statement to handle this. If the robot's angular velocity is sufficently small, then we will assume it is following a straight line and we will use the following model:
+
+<img src="https://render.githubusercontent.com/render/math?math=\begin{pmatrix} x + v \Delta t cos(\theta + \omega\Delta t) \\  y + v \Delta t sin(\theta + \omega\Delta t) \\  \theta + \omega\Delta t \end{pmatrix}">
+
+Where we simply compute the linear motion of the robot and divide it into x and y components based on the robot's final orientation.
