@@ -1,15 +1,9 @@
-function [robotPose] = differentialDriveKinematics(v_mps, w_radps, dt_s, model)
+function [newPose] = differentialDriveKinematics(pose, v_mps, w_radps, dt_s, model)
 %DIFFERENTIALDRIVEKINEMATICS Summary of this function goes here
 %   Detailed explanation goes here
 
-% Initialize pose variable
-persistent pose;
-if isempty(pose)
-    pose = [0,0,0];
-end
-
 % If no model is specified, use the 'simple' model
-if(nargin < 3), model = 'linear'; end
+if(nargin < 4), model = 'linear'; end
 
 if(strcmp(model, 'icr'))
     % compute radius of curvature
@@ -52,6 +46,6 @@ else
     pose = pose + R*u.*dt_s;
 end
 
-robotPose = pose;
+newPose = pose;
 end
 

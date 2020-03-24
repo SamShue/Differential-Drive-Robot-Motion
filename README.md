@@ -6,7 +6,7 @@ In any mobile robotics project knowing how to estimate your robot's position is 
 
 For this application, we'll consider one of the most common scenarios: tracking the 2D pose of a differential drive robot using wheel encoders.
 
-## Defining Variables
+## The Basics
 
 Before jumping into the code, let's take a moment to define some terms and give some basic background information you have probably seen before. But for the sake of completion and for readers who may be encountering this information for the first time, I will be rehashing the fundamentals here.
 
@@ -15,7 +15,6 @@ The first thing to define is the "global frame" or the "world frame". This is th
 We will define the 2D pose of the robot as the following:
 
 <img src="https://render.githubusercontent.com/render/math?math=p_r = \begin{bmatrix} x \\ y \\ \theta \end{bmatrix}">
-
 
 The pose of the robot corresponds to its x,y position and theta orientation within the global frame. The robot is modeled as a single point with some orientation.
 
@@ -28,7 +27,33 @@ Where d is the wheel diameter. This equation gives us the wheel velocity in mps.
 Once we have the linear velocity of the left and right wheel, we then need to consider the dynamics of a differential drive system to determine its linear and rotational velocity of the overall vehicle. For example, if both wheels are moving forward at the same velocity, the vehicle itself will only have a linear velocity directed along the robot's local coordinate frame's x axis. If each wheel moves at equal velocities in opposite directions, the robot will have a rotational velocity and no linear velocity as it will be moving in place. If the robot moves with both wheels with different, positive velocities, the robot will move with some curvature, resulting in a linear and rotational velocity.
 
 To compute linear and rotational velocities, the following equations are used:
-<img src="https://render.githubusercontent.com/render/math?math=v_{m/s} =  \frac{v_r_{rad/s} + v_l_{rad/s}}{2}">
+
+<img src="https://render.githubusercontent.com/render/math?math=v_{m/s} =  \frac{v_r_{m/s} + v_l_{m/s}}{2}">
+
 and 
-<img src="https://render.githubusercontent.com/render/math?math=v_{m/s} =  \frac{v_r_{rad/s} - v_l_{rad/s}}{W}">
-where <img src="https://render.githubusercontent.com/render/math?math=v_r_{rad/s}"> and <img src="https://render.githubusercontent.com/render/math?math=v_l_{rad/s}"> are the right and left wheel velocities, respectively, and W is the track width of the robot. Trackwidth is the distance between each wheel. The point that defines the origin of the robot frame is the point halfway between each wheel. 
+
+<img src="https://render.githubusercontent.com/render/math?math=\omega_{rad/s} =  \frac{v_r_{m/s} - v_l_{m/s}}{W}">
+
+where <img src="https://render.githubusercontent.com/render/math?math=v_r_{m/s}"> and <img src="https://render.githubusercontent.com/render/math?math=v_l_{m/s}"> are the right and left wheel velocities, respectively, and W is the track width of the robot. Trackwidth is the distance between each wheel. The point that defines the origin of the robot frame is the point halfway between each wheel. 
+
+## The Linear Forward Kinematic Model
+
+To determine our robot's position after getting the linear and rotational velocities of the robot, we need a mathematical model representing the kinematics of the differential drive system. This model will allow us to input the velocities and the amount of time between readings to determine the robot's change in position. The simplest model for the kinematics of a differential drive robot is a linear model that simply performs the linear translation and rotation afterwards. This model begins by creating a rotation matrix based on the robot's current orientation.
+
+<img src="https://render.githubusercontent.com/render/math?math=R(\theta) = \begin{bmatrix} cos(\theta) & 0\\ sin(\theta) & 0\\ 0 & 1\end{bmatrix}">
+
+Where theta is the robot's current orientation. We will multiply this matrix by a vector containing our linear and rotational velocities.
+
+<img src="https://render.githubusercontent.com/render/math?math=u = \begin{bmatrix} v\\ \omega \end{bmatrix}">
+
+
+By multiplying R by u, we get a 3x1 vector contining the x and y linear velocities in the world frame and the rotational velocities of the robot. 
+
+<img src="https://render.githubusercontent.com/render/math?math=\begin{bmatrix}\dot{x} \\ \dot{y} \\ \omega \end{bmatrix}">
+
+by multiplying these by the change in time between iterations, <img src="https://render.githubusercontent.com/render/math?math=\delta t">, and adding it to the original pose, we get the updated pose of the robot.
+
+## The ICR Forward Kinematic Model
+
+While the linear model is simple, and when used at a very high sampling rate, it provides a "good enough" estimation of the robot's position. However, this model does not account for the curvature of the robot's motion as it only performs a linear motion THEN rotates. In reality, the robot is turning while making its linear motion. The model introduced here will account for this and provide a more accurate estimation of the robot's pose (assuming constant velocity).
+

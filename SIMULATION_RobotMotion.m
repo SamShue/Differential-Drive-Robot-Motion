@@ -24,13 +24,13 @@ for ii = 1:length(u(1,:))
     v_mps = (Vr_mps + Vl_mps) / 2.0;
     w_radps = (Vr_mps - Vl_mps) / trackWidth_m;
     
-    robotPose = differentialDriveKinematics(v_mps, w_radps, dt_s, 'icr');
+    robotPose = differentialDriveKinematics(robotPose, v_mps, w_radps, dt_s, 'icr');
     
     % Render environment
     %======================================================================
     clf;
     hold on;
-    xlim([-1 4]); ylim([-2 2]);
+    xlim([-0.5 3.5]); ylim([-1.5 1.5]);
     xlabel('meters'); ylabel('meters');
     if(exist('robotPose'))
         drawRobot(robotPose(1), robotPose(2), rad2deg(robotPose(3)), 0.25);
