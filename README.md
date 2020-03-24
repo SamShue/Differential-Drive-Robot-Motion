@@ -28,6 +28,8 @@ Where d is the wheel diameter. This equation gives us the wheel velocity in mps.
 
 Once we have the linear velocity of the left and right wheel, we then need to consider the dynamics of a differential drive system to determine its linear and rotational velocity of the overall vehicle. For example, if both wheels are moving forward at the same velocity, the vehicle itself will only have a linear velocity directed along the robot's local coordinate frame's x axis. If each wheel moves at equal velocities in opposite directions, the robot will have a rotational velocity and no linear velocity as it will be moving in place. If the robot moves with both wheels with different, positive velocities, the robot will move with some curvature, resulting in a linear and rotational velocity.
 
+<img src="resources/robotMotion.png" width="400" height="200">
+
 To compute linear and rotational velocities, the following equations are used:
 
 <img src="https://render.githubusercontent.com/render/math?math=v_{m/s} =  \frac{v_r_{m/s} %2B v_l_{m/s}}{2}">
