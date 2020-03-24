@@ -83,6 +83,6 @@ Which after substituting for xc and yc:
 
 This equation gives us the robot's new pose while considering the curvature of the motion. However, this model has one caveat: pure linear motion. If the robot is driving on a straight line, the circle describing it's motion has an infinite radius. So we need to add a conditional statement to handle this. If the robot's angular velocity is sufficently small, then we will assume it is following a straight line and we will use the following model:
 
-<img src="https://render.githubusercontent.com/render/math?math={\begin{pmatrix} x + v \Delta t cos(\theta + \omega\Delta t) \\  y + v \Delta t sin(\theta + \omega\Delta t) \\  \theta + \omega\Delta t \end{pmatrix}}">
+<img src="https://render.githubusercontent.com/render/math?math=\begin{pmatrix} x+v \Delta t cos(\theta + \omega\Delta t) \\  y + v \Delta t sin(\theta + \omega\Delta t) \\  \theta + \omega\Delta t \end{pmatrix}">
 
 Where we simply compute the linear motion of the robot and divide it into x and y components based on the robot's final orientation.
