@@ -2,12 +2,12 @@ function [newPose] = differentialDriveKinematics(pose, v_mps, w_radps, dt_s, mod
 %DIFFERENTIALDRIVEKINEMATICS Kinematic model of 2D differential drive robot
 %   This function performs the kinematics of a 2D differential drive robot
 %   based on a specified model. If a model is not specified, the robot will
-%   use the linear model. The user may specify 'icr' or 'linear'. The user
+%   use the linear model. The user may specify 'icr' or 'simple'. The user
 %   is required to provide the robot's pose (x_m, y_m, theta_rad), linear
 %   velocity (mps), and rotational velocity (radps).
 
 % If no model is specified, use the 'simple' model
-if(nargin < 4), model = 'linear'; end
+if(nargin < 4), model = 'simple'; end
 
 if(strcmp(model, 'icr'))
     % The instantenous center of rotation model. This model projects the
@@ -39,7 +39,7 @@ if(strcmp(model, 'icr'))
         pose(3) = pose(3) + w_radps*dt_s;
     end
 else
-    % The linear model. This model does not account for curvature in motion
+    % The simple model. This model does not account for curvature in motion
     % and applies motion as a linear move then rotation. 
     
     theta = pose(3);

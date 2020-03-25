@@ -40,7 +40,7 @@ and
 
 where <img src="https://render.githubusercontent.com/render/math?math=v_r_{m/s}"> and <img src="https://render.githubusercontent.com/render/math?math=v_l_{m/s}"> are the right and left wheel velocities, respectively, and W is the track width of the robot. Trackwidth is the distance between each wheel. The point that defines the origin of the robot frame is the point halfway between each wheel. 
 
-## The Linear Forward Kinematic Model
+## The Forward Kinematic Model
 
 To determine our robot's position after getting the linear and rotational velocities of the robot, we need a mathematical model representing the kinematics of the differential drive system. This model will allow us to input the velocities and the amount of time between readings to determine the robot's change in position. The simplest model for the kinematics of a differential drive robot is a linear model that simply performs the linear translation and rotation afterwards. This model begins by creating a rotation matrix based on the robot's current orientation.
 
@@ -57,9 +57,9 @@ By multiplying R by u, we get a 3x1 vector contining the x and y linear velociti
 
 by multiplying these by the change in time between iterations, <img src="https://render.githubusercontent.com/render/math?math=\delta t">, and adding it to the original pose, we get the updated pose of the robot.
 
-## The ICR Forward Kinematic Model
+## The Forward Kinematic Model using ICR
 
-While the linear model is simple, and when used at a very high sampling rate, it provides a "good enough" estimation of the robot's position. However, this model does not account for the curvature of the robot's motion as it only performs a linear motion THEN rotates. In reality, the robot is turning while making its linear motion. The model introduced here will account for this and provide a more accurate estimation of the robot's pose (assuming constant velocity).
+While the previous model is simple, and when used at a very high sampling rate, it provides a "good enough" estimation of the robot's position. However, this model does not account for the curvature of the robot's motion as it only performs a linear motion THEN rotates. In reality, the robot is turning while making its linear motion. The model introduced here will account for this and provide a more accurate estimation of the robot's pose (assuming constant velocity).
 
 If the robot is driving at a constant linear and rotational velocity, that motion can be described as a circle with some radius. The equation for an arbitrary objection moving on a circular trajector with radius r can be described by:
 
@@ -94,5 +94,10 @@ Where we simply compute the linear motion of the robot and divide it into x and 
 ## MATLAB Code Demo
 
 The project code demonstrates the two models mentioned above with a very simple robot simulation. To run the code, simply clone this repository and run the script SIMULATION_RobotMotion.m. This code will drive a simulated robot along a sinusoidal path using the ICR model by default.
+
+## References
+http://www.cs.cmu.edu/~rasc/Download/AMRobots3.pdf
+https://www.researchgate.net/publication/271098735_Dynamic_Modelling_of_Differential-Drive_Mobile_Robots_using_Lagrange_and_Newton-Euler_Methodologies_A_Unified_Framework
+https://mitpress.mit.edu/books/probabilistic-robotics
 
 <!--- Note: + signs do not show up, so %2B must be used to replace them. https://gist.github.com/a-rodin/fef3f543412d6e1ec5b6cf55bf197d7b -->
