@@ -16,9 +16,11 @@ We will define the 2D pose of the robot as the following:
 
 <img src="https://render.githubusercontent.com/render/math?math=p_r = \begin{bmatrix} x \\ y \\ \theta \end{bmatrix}">
 
-The pose of the robot corresponds to its x,y position and theta orientation within the global frame. The robot is modeled as a single point with some orientation.
+The pose of the robot corresponds to its x,y position and theta orientation within the global frame. The robot is modeled as a single point with some orientation. The diagram below taken from [2] shows a differential drive robot within the world frame:
 
-<img src="resources/globalFrame.png" width="200" height="200">
+<img src="resources/robotFrameWorldFrame.png" width="200" height="200">
+
+Where point A represents the position of the robot, theta denotes the orientation. The coordinate frame where the robot exists is its world/global frame. 
 
 The control input for the robot will be derived from its wheel enocders. The wheel encoders measure the rotations of the robot's wheels, which can be used to determine the velocity of each wheel. Typically, this value is produced in radians per second. We will want to transform this value so we get meters per secod for each wheel:
 
@@ -65,7 +67,7 @@ If the robot is driving at a constant linear and rotational velocity, that motio
 
 <img src="https://render.githubusercontent.com/render/math?math=v = \omega r">
 
-Rearranged, we get::
+Rearranged, we get:
 
 <img src="https://render.githubusercontent.com/render/math?math=r = abs(\frac{v}{r})">
 
@@ -96,8 +98,9 @@ Where we simply compute the linear motion of the robot and divide it into x and 
 The project code demonstrates the two models mentioned above with a very simple robot simulation. To run the code, simply clone this repository and run the script SIMULATION_RobotMotion.m. This code will drive a simulated robot along a sinusoidal path using the ICR model by default.
 
 ## References
-http://www.cs.cmu.edu/~rasc/Download/AMRobots3.pdf
-https://www.researchgate.net/publication/271098735_Dynamic_Modelling_of_Differential-Drive_Mobile_Robots_using_Lagrange_and_Newton-Euler_Methodologies_A_Unified_Framework
-https://mitpress.mit.edu/books/probabilistic-robotics
+[1] http://www.cs.cmu.edu/~rasc/Download/AMRobots3.pdf
+[2] https://www.researchgate.net/publication/271098735_Dynamic_Modelling_of_Differential-Drive_Mobile_Robots_using_Lagrange_and_Newton-Euler_Methodologies_A_Unified_Framework
+[3] https://mitpress.mit.edu/books/probabilistic-robotics
+[4] https://dspace.mit.edu/bitstream/handle/1721.1/36832/16-412JSpring2004/NR/rdonlyres/Aeronautics-and-Astronautics/16-412JSpring2004/A3C5517F-C092-4554-AA43-232DC74609B3/0/1Aslam_blas_report.pdf
 
 <!--- Note: + signs do not show up, so %2B must be used to replace them. https://gist.github.com/a-rodin/fef3f543412d6e1ec5b6cf55bf197d7b -->
