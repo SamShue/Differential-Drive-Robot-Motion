@@ -40,7 +40,11 @@ if(strcmp(model, 'icr'))
     end
 else
     % The simple model. This model does not account for curvature in motion
-    % and applies motion as a linear move then rotation. 
+    % and applies motion as a linear move then rotation.
+    
+    % x + v*dt*cos(theta)
+    % y + v*dt*sin(theta)
+    % theta + dt*w
     
     theta = pose(3);
     % create rotation matrix to get velocities in global frame
@@ -50,6 +54,9 @@ else
     u = [v_mps; w_radps];
     % update pose with global frame velocities
     pose = pose + R*u.*dt_s;
+    
+    
+    
 end
 
 newPose = pose;
