@@ -18,7 +18,7 @@ We will define the 2D pose of the robot as the following:
 
 The pose of the robot corresponds to its x,y position and theta orientation within the global frame. The robot is modeled as a single point with some orientation. The diagram below taken from [2] shows a differential drive robot within the world frame:
 
-<img src="resources/robotFrameWorldFrame.png" width="200" height="200">
+<img src="resources/robotFrameWorldFrame.PNG" width="200" height="200">
 
 Where point A represents the position of the robot, theta denotes the orientation. The coordinate frame where the robot exists is its world/global frame. 
 
