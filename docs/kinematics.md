@@ -15,7 +15,7 @@ The first thing to define is the "global frame" or the "world frame". This is th
 We will define the 2D pose of the robot as the following:
 
 $$
-p_t = \begin{bmatrix} x \\ y \\ \theta \end{bmatrix}
+p_t = \begin{bmatrix} x \\\\ y \\\\ \theta \end{bmatrix}
 $$
 
 The pose of the robot corresponds to its *x*, *y* position and theta orientation within the global frame. The robot is modeled as a single point with some orientation. The diagram below taken from [2] shows a differential drive robot within the world frame:
@@ -55,19 +55,19 @@ where $v_r$ and $v_l$ are the right and left wheel velocities, respectively, and
 To determine our robot's position after getting the linear and rotational velocities of the robot, we need a mathematical model representing the kinematics of the differential drive system. This model will allow us to input the velocities and the amount of time between readings to determine the robot's change in position. The simplest model for the kinematics of a differential drive robot is a linear model that simply performs the linear translation and rotation afterwards. This model begins by creating a rotation matrix based on the robot's current orientation.
 
 $$
-R(\theta) = \begin{bmatrix} \cos(\theta) & 0 \\ \sin(\theta) & 0 \\ 0 & 1 \end{bmatrix}
+R(\theta) = \begin{bmatrix} \cos(\theta) & 0 \\\\ \sin(\theta) & 0 \\\\ 0 & 1 \end{bmatrix}
 $$
 
 Where theta is the robot's current orientation. We will multiply this matrix by a vector containing our linear and rotational velocities.
 
 $$
-u = \begin{bmatrix} v \\ \omega \end{bmatrix}
+u = \begin{bmatrix} v \\\\ \omega \end{bmatrix}
 $$
 
 By multiplying R by u, we get a 3x1 vector containing the x and y linear velocities in the world frame and the rotational velocities of the robot.
 
 $$
-\begin{bmatrix} \dot{x} \\ \dot{y} \\ \omega \end{bmatrix}
+\begin{bmatrix} \dot{x} \\\\ \dot{y} \\\\ \omega \end{bmatrix}
 $$
 
 by multiplying these by the change in time between iterations, δt, and adding it to the original pose, we get the updated pose of the robot.
@@ -101,19 +101,19 @@ $$
 Where xc and yc is the center point of the circle described by the robot's motion. The following equation computes the arclength of the robot's motion along the circle to find the new pose of the robot after delta t seconds of travel:
 
 $$
-\begin{bmatrix} x_c - \frac{v}{\omega}\sin(\theta + \omega \Delta t) \\ y_c + \frac{v}{\omega}\cos(\theta + \omega \Delta t) \\ \theta + \omega \Delta t \end{bmatrix}
+\begin{bmatrix} x_c - \frac{v}{\omega}\sin(\theta + \omega \Delta t) \\\\ y_c + \frac{v}{\omega}\cos(\theta + \omega \Delta t) \\\\ \theta + \omega \Delta t \end{bmatrix}
 $$
 
 Which after substituting for xc and yc:
 
 $$
-\begin{bmatrix} x - \frac{v}{\omega}\sin(\theta) - \frac{v}{\omega}\sin(\theta + \omega \Delta t) \\ y + \frac{v}{\omega}\cos(\theta) - \frac{v}{\omega}\cos(\theta + \omega \Delta t) \\ \theta + \omega \Delta t \end{bmatrix}
+\begin{bmatrix} x - \frac{v}{\omega}\sin(\theta) - \frac{v}{\omega}\sin(\theta + \omega \Delta t) \\\\ y + \frac{v}{\omega}\cos(\theta) - \frac{v}{\omega}\cos(\theta + \omega \Delta t) \\\\ \theta + \omega \Delta t \end{bmatrix}
 $$
 
 This equation gives us the robot's new pose while considering the curvature of the motion. However, this model has one caveat: pure linear motion. If the robot is driving on a straight line, the circle describing its motion has an infinite radius. So, we need to add a conditional statement to handle this. If the robot's angular velocity is sufficiently small, then we will assume it is following a straight line and we will use the following model:
 
 $$
-\begin{bmatrix} x + v \Delta t \cos(\theta + \omega \Delta t) \\ y + v \Delta t \sin(\theta + \omega \Delta t) \\ \theta + \omega \Delta t \end{bmatrix}
+\begin{bmatrix} x + v \Delta t \cos(\theta + \omega \Delta t) \\\\ y + v \Delta t \sin(\theta + \omega \Delta t) \\\\ \theta + \omega \Delta t \end{bmatrix}
 $$
 
 Where we simply compute the linear motion of the robot and divide it into x and y components based on the robot's final orientation.
