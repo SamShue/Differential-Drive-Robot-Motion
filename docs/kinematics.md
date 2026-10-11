@@ -14,7 +14,9 @@ The first thing to define is the "global frame" or the "world frame". This is th
 
 We will define the 2D pose of the robot as the following:
 
-![Pose vector p_t = [x, y, theta]](images/pose-vector.png)
+$$
+p_t = \begin{bmatrix} x \\ y \\ \theta \end{bmatrix}
+$$
 
 The pose of the robot corresponds to its *x*, *y* position and theta orientation within the global frame. The robot is modeled as a single point with some orientation. The diagram below taken from [2] shows a differential drive robot within the world frame:
 
@@ -24,7 +26,9 @@ Where point A represents the position of the robot, theta denotes the orientatio
 
 The control input for the robot will be derived from its wheel encoders. The wheel encoders measure the rotations of the robot's wheels, which can be used to determine the velocity of each wheel. Typically, this value is produced in radians per second. We will want to transform this value so we get meters per second for each wheel:
 
-![Equation converting wheel velocity from radians per second to meters per second using wheel diameter d](images/wheel-velocity-conversion.png)
+$$
+v_{m/s} = v_{rad/s} \frac{d}{2\pi}
+$$
 
 Where d is the wheel diameter. This equation gives us the wheel velocity in mps. This will need to be performed for each tire of the robot.
 
@@ -34,27 +38,37 @@ Once we have the linear velocity of the left and right wheel, we then need to co
 
 To compute linear and rotational velocities, the following equations are used:
 
-![Linear velocity equation: v = (v_r + v_l) / 2](images/linear-velocity-equation.png)
+$$
+v_{m/s} = \frac{v_{r\,m/s} + v_{l\,m/s}}{2}
+$$
 
 and
 
-![Rotational velocity equation: omega = (v_r - v_l) / W](images/rotational-velocity-equation.png)
+$$
+\omega_{rad/s} = \frac{v_{r\,m/s} - v_{l\,m/s}}{W}
+$$
 
-where ![v_r](images/right-wheel-velocity-label.png) and ![v_l](images/left-wheel-velocity-label.png) are the right and left wheel velocities, respectively, and W is the track width of the robot. Trackwidth is the distance between each wheel. The point that defines the origin of the robot frame is the point halfway between each wheel.
+where $v_r$ and $v_l$ are the right and left wheel velocities, respectively, and W is the track width of the robot. Trackwidth is the distance between each wheel. The point that defines the origin of the robot frame is the point halfway between each wheel.
 
 ## The Forward Kinematic Model
 
 To determine our robot's position after getting the linear and rotational velocities of the robot, we need a mathematical model representing the kinematics of the differential drive system. This model will allow us to input the velocities and the amount of time between readings to determine the robot's change in position. The simplest model for the kinematics of a differential drive robot is a linear model that simply performs the linear translation and rotation afterwards. This model begins by creating a rotation matrix based on the robot's current orientation.
 
-![Rotation matrix R(theta)](images/rotation-matrix.png)
+$$
+R(\theta) = \begin{bmatrix} \cos(\theta) & 0 \\ \sin(\theta) & 0 \\ 0 & 1 \end{bmatrix}
+$$
 
 Where theta is the robot's current orientation. We will multiply this matrix by a vector containing our linear and rotational velocities.
 
-![Control input vector u = [v, omega]](images/control-input-vector.png)
+$$
+u = \begin{bmatrix} v \\ \omega \end{bmatrix}
+$$
 
 By multiplying R by u, we get a 3x1 vector containing the x and y linear velocities in the world frame and the rotational velocities of the robot.
 
-![Global frame velocity vector [x_dot, y_dot, omega]](images/global-frame-velocity-vector.png)
+$$
+\begin{bmatrix} \dot{x} \\ \dot{y} \\ \omega \end{bmatrix}
+$$
 
 by multiplying these by the change in time between iterations, δt, and adding it to the original pose, we get the updated pose of the robot.
 
@@ -64,29 +78,43 @@ While the previous model is simple, and when used at a very high sampling rate, 
 
 If the robot is driving at a constant linear and rotational velocity, that motion can be described as a circle with some radius. The equation for an arbitrary objection moving on a circular trajectory with radius r can be described by:
 
-![Equation v = omega * r](images/linear-rotational-radius-relation.png)
+$$
+v = \omega r
+$$
 
 Rearranged, we get:
 
-![Equation r = abs(v / omega)](images/radius-of-curvature.png)
+$$
+r = \left|\frac{v}{\omega}\right|
+$$
 
 Where v and omega are the robot's linear and rotational velocities. This gives us the radius of the circle described by the robot's motion. The point in the center of this circle is called the instantaneous center of rotation. "Instantaneous" as we are only considering the velocity of the robot at that current moment. The equations to find the x,y point that is the center of rotation are as follows:
 
-![Equation x_c = x - (v/omega) sin(theta)](images/icr-xc-equation.png)
+$$
+x_c = x - \frac{v}{\omega}\sin(\theta)
+$$
 
-![Equation y_c = y - (v/omega) cos(theta)](images/icr-yc-equation.png)
+$$
+y_c = y - \frac{v}{\omega}\cos(\theta)
+$$
 
 Where xc and yc is the center point of the circle described by the robot's motion. The following equation computes the arclength of the robot's motion along the circle to find the new pose of the robot after delta t seconds of travel:
 
-![Pose update equation using the instantaneous center of rotation](images/icr-pose-update-equation.png)
+$$
+\begin{bmatrix} x_c - \frac{v}{\omega}\sin(\theta + \omega \Delta t) \\ y_c + \frac{v}{\omega}\cos(\theta + \omega \Delta t) \\ \theta + \omega \Delta t \end{bmatrix}
+$$
 
 Which after substituting for xc and yc:
 
-![Pose update equation substituted with x_c and y_c](images/icr-pose-update-substituted.png)
+$$
+\begin{bmatrix} x - \frac{v}{\omega}\sin(\theta) - \frac{v}{\omega}\sin(\theta + \omega \Delta t) \\ y + \frac{v}{\omega}\cos(\theta) - \frac{v}{\omega}\cos(\theta + \omega \Delta t) \\ \theta + \omega \Delta t \end{bmatrix}
+$$
 
 This equation gives us the robot's new pose while considering the curvature of the motion. However, this model has one caveat: pure linear motion. If the robot is driving on a straight line, the circle describing its motion has an infinite radius. So, we need to add a conditional statement to handle this. If the robot's angular velocity is sufficiently small, then we will assume it is following a straight line and we will use the following model:
 
-![Pose update equation for the straight-line (zero angular velocity) case](images/icr-straight-line-case.png)
+$$
+\begin{bmatrix} x + v \Delta t \cos(\theta + \omega \Delta t) \\ y + v \Delta t \sin(\theta + \omega \Delta t) \\ \theta + \omega \Delta t \end{bmatrix}
+$$
 
 Where we simply compute the linear motion of the robot and divide it into x and y components based on the robot's final orientation.
 
